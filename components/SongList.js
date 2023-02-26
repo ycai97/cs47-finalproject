@@ -1,7 +1,8 @@
-import { FlatList, StyleSheet, Text, View, Dimensions, Image } from "react-native";
+import { FlatList, StyleSheet, Text, View, Dimensions, Image, Pressable } from "react-native";
 import { Themes } from "../assets/Themes";
 import { millisToMinutesAndSeconds } from "../utils";
 import images from "../assets/Images/images";
+import { AntDesign } from '@expo/vector-icons';
 
 const { height, width } = Dimensions.get('window');
 
@@ -20,28 +21,39 @@ const getSongArtists = (lst) => {
     }
 }
 
-const renderSongItem = ({item}) => {
-    // console.log(item);
+const renderSongItem = ({item, navigation}) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.songIndexText}>{item.songIndex}</Text>
-            <Image 
-                style={styles.imageStyle}
-                source={{
-                    uri: item.imageUrl
-                }}
-            />
-            <View style={styles.textContainer}>
-                <Text style={styles.songTitleText} numberOfLines={1}>{item.songTitle}</Text>
-                <Text style={styles.artistText} numberOfLines={1}>{getSongArtists(item.songArtists)}</Text>
-            </View>
-            <Text style={styles.albumText} numberOfLines={1}>{item.albumName}</Text>
-            <Text style={styles.durationText}>{millisToMinutesAndSeconds(item.duration)}</Text>
+            <Pressable onPress={() => navigation.navigate('PreviewScreen', {url: item.previewUrl})}>
+                <AntDesign name="play" size={21} color="green" />
+            </Pressable>
+            {/* <Text style={styles.songIndexText}>{item.songIndex}</Text> */}
+            <Pressable onPress={() => navigation.navigate('DetailsScreen', {url: item.externalUrl})}>
+                <Image 
+                    style={styles.imageStyle}
+                    source={{
+                        uri: item.imageUrl
+                    }}
+                />
+            </Pressable>
+            <Pressable onPress={() => navigation.navigate('DetailsScreen', {url: item.externalUrl})}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.songTitleText} numberOfLines={1}>{item.songTitle}</Text>
+                    <Text style={styles.artistText} numberOfLines={1}>{getSongArtists(item.songArtists)}</Text>
+                </View>
+            </Pressable>
+            <Pressable onPress={() => navigation.navigate('DetailsScreen', {url: item.externalUrl})}>
+                <Text style={styles.albumText} numberOfLines={1}>{item.albumName}</Text>
+            </Pressable>
+            <Pressable onPress={() => navigation.navigate('DetailsScreen', {url: item.externalUrl})}>
+                <Text style={styles.durationText}>{millisToMinutesAndSeconds(item.duration)}</Text>
+            </Pressable>
         </View>
     )
 }
 
-const SongList = ({tracks}) => {
+const SongList = ({tracks, navigation}) => {
+    // console.log(tracks);
     return (
         <View>
             <View style={styles.headerContainer}>
@@ -50,7 +62,7 @@ const SongList = ({tracks}) => {
             </View>
             <FlatList 
                 data={tracks}
-                renderItem={({item}) => renderSongItem({item})}
+                renderItem={({item}) => renderSongItem({item, navigation})}
                 keyExtractor={(item) => item.songIndex}
             />
         </View>
